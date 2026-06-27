@@ -73,7 +73,7 @@ def desenhar_figura_nova():
         canvas.create_line(values, dash=(4, 2))
 
     elif fig == "retangulo":
-        canvas.create_line(values, dash=(4, 2))
+        canvas.create_rectangle(values, dash=(4, 2))
     
     elif fig == "oval":
         canvas.create_oval(values, dash=(4, 2))
