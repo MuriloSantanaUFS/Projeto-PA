@@ -28,10 +28,21 @@ def iniciar_figura_nova(event):
 # Quando mouse é movido com o botão pressionado
 def atualizar_figura_nova(event):
     global figura_nova
+
     if figura_nova[0] == "rabisco":
         figura_nova[1].append((event.x, event.y))
-    else : # figura_nova[0] == "linha"
-        figura_nova = ("linha", (figura_nova[1][0], figura_nova[1][1], event.x, event.y))
+
+    else:
+        figura_nova = (
+            figura_nova[0],
+            (
+                figura_nova[1][0],
+                figura_nova[1][1],
+                event.x,
+                event.y
+            )
+        )
+
     desenhar_figuras()
     desenhar_figura_nova()
 
