@@ -4,10 +4,26 @@ from tkinter import ttk
 # Quando mouse é pressionado
 def iniciar_figura_nova(event): 
     global figura_nova
-    if tipo_figura_var.get() == 'Linha':
+# =========================
+# ALTERAÇÕES - MURILO
+# Adição de retângulo, oval e círculo
+# =========================
+    tipo = tipo_figura_var.get()
+
+    if tipo == 'Linha':
         figura_nova = ("linha", (event.x, event.y, event.x, event.y))
-    else :
+
+    elif tipo == 'Rabisco':
         figura_nova = ("rabisco", [(event.x, event.y)])
+
+    elif tipo == 'Retangulo':
+        figura_nova = ("retangulo", (event.x, event.y, event.x, event.y))
+
+    elif tipo == 'Oval':
+        figura_nova = ("oval", (event.x, event.y, event.x, event.y))
+
+    elif tipo == 'Circulo':
+        figura_nova = ("circulo", (event.x, event.y, event.x, event.y))
 
 # Quando mouse é movido com o botão pressionado
 def atualizar_figura_nova(event):
@@ -27,18 +43,43 @@ def incluir_figura_nova(event):
 
 def desenhar_figuras():
     canvas.delete("all")
+# CORRIGIDO: adicionado suporte a retângulo, oval e círculo no desenho
     for fig, values in figuras:
+
         if fig == "linha":
             canvas.create_line(values[0], values[1], values[2], values[3])
-        else : # fig == "rabisco"
+
+        elif fig == "rabisco":
             canvas.create_line(values)
+
+        elif fig == "retangulo":
+            canvas.create_rectangle(values)
+
+        elif fig == "oval":
+            canvas.create_oval(values)
+
+        elif fig == "circulo":
+            canvas.create_oval(values)
 
 def desenhar_figura_nova():
     fig, values = figura_nova
+# =========================
+# Os novos tipo ja foram adicionados (feito por Murilo)
+# =========================
     if fig == "linha":
         canvas.create_line(values[0], values[1], values[2], values[3], dash=(4, 2))
-    else : # fig == "rabisco"
+
+    elif fig == "rabisco":
         canvas.create_line(values, dash=(4, 2))
+
+    elif fig == "retangulo":
+        canvas.create_line(values, dash=(4, 2))
+    
+    elif fig == "oval":
+        canvas.create_oval(values, dash=(4, 2))
+    
+    elif fig == "circulo":
+        canvas.create_oval(values, dash=(4, 2))
 
 def incompleta(figura):
     fig, values = figura
@@ -69,7 +110,13 @@ label.grid(column=0, row=0, sticky=W, **paddings)
 # option menu
 tipo_figura_var = StringVar(root) # Guarda o tipo de figura selecionado no option menu (linha ou rabisco)
 option_menu = ttk.OptionMenu(frame, tipo_figura_var,
-                             'Linha', 'Linha', 'Rabisco')
+                             'Linha', 'Linha', 'Rabisco', 'Retangulo', 'Oval', 'Circulo')
+# =========================
+# - Atualização do OptionMenu com novos tipos de figura (feito por Murilo)
+# =========================
+
+
+
 option_menu.grid(column=1, row=0, sticky=W, **paddings)
 
 # Área de desenho
