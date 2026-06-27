@@ -70,7 +70,22 @@ def desenhar_figuras():
             canvas.create_oval(values)
 
         elif fig == "circulo":
-            canvas.create_oval(values)
+
+            x1, y1, x2, y2 = values
+
+            lado = min(abs(x2 - x1), abs(y2 - y1))
+
+            if x2 >= x1:
+                x2 = x1 + lado
+            else:
+                x2 = x1 - lado
+
+            if y2 >= y1:
+                y2 = y1 + lado
+            else:
+                y2 = y1 - lado
+
+        canvas.create_oval(x1, y1, x2, y2)
 
 def desenhar_figura_nova():
     fig, values = figura_nova
@@ -90,14 +105,36 @@ def desenhar_figura_nova():
         canvas.create_oval(values, dash=(4, 2))
     
     elif fig == "circulo":
-        canvas.create_oval(values, dash=(4, 2))
+
+        x1, y1, x2, y2 = values
+
+        lado = min(abs(x2 - x1), abs(y2 - y1))
+
+        if x2 >= x1:
+            x2 = x1 + lado
+        else:
+            x2 = x1 - lado
+
+        if y2 >= y1:
+            y2 = y1 + lado
+        else:
+            y2 = y1 - lado
+
+        canvas.create_oval(
+            x1,
+            y1,
+            x2,
+            y2,
+            dash=(4,2)
+        )
 
 def incompleta(figura):
     fig, values = figura
-    if fig == "linha":
-        return (values[0], values[1]) == (values[2], values[3])
-    else : # fig == "rabisco"
+
+    if fig == "rabisco":
         return len(values) <= 1
+
+    return (values[0], values[1]) == (values[2], values[3])
 
 
 
