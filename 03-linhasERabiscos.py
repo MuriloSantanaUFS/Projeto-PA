@@ -1,5 +1,6 @@
 from tkinter import *
 from tkinter import ttk
+from tkinter.colorchooser import askcolor
 
 # Quando mouse é pressionado
 def iniciar_figura_nova(event): 
@@ -11,19 +12,39 @@ def iniciar_figura_nova(event):
     tipo = tipo_figura_var.get()
 
     if tipo == 'Linha':
-        figura_nova = ("linha", (event.x, event.y, event.x, event.y))
+        figura_nova = (
+            "linha",
+            (event.x, event.y, event.x, event.y),
+            cor_borda
+        )
 
     elif tipo == 'Rabisco':
-        figura_nova = ("rabisco", [(event.x, event.y)])
+        figura_nova = (
+            "rabisco",
+            [(event.x, event.y)],
+            cor_borda
+        )
 
     elif tipo == 'Retangulo':
-        figura_nova = ("retangulo", (event.x, event.y, event.x, event.y))
+        figura_nova = (
+            "retangulo",
+            (event.x, event.y, event.x, event.y),
+            cor_borda
+        )
 
     elif tipo == 'Oval':
-        figura_nova = ("oval", (event.x, event.y, event.x, event.y))
+        figura_nova = (
+            "oval",
+            (event.x, event.y, event.x, event.y),
+            cor_borda
+        )
 
     elif tipo == 'Circulo':
-        figura_nova = ("circulo", (event.x, event.y, event.x, event.y))
+        figura_nova = (
+            "circulo",
+            (event.x, event.y, event.x, event.y),
+            cor_borda
+        )
 
 # Quando mouse é movido com o botão pressionado
 def atualizar_figura_nova(event):
@@ -40,8 +61,10 @@ def atualizar_figura_nova(event):
                 figura_nova[1][1],
                 event.x,
                 event.y
-            )
+            ),
+            figura_nova[2]
         )
+        
 
     desenhar_figuras()
     desenhar_figura_nova()
@@ -51,90 +74,102 @@ def incluir_figura_nova(event):
     if not incompleta(figura_nova): # para evitar incluir figuras incompletas, como uma linha sem comprimento ou um rabisco com um único ponto
         figuras.append(figura_nova) 
     desenhar_figuras()
+    
+def desenhar(figura, tracejado=False):
 
-def desenhar_figuras():
-    canvas.delete("all")
-# CORRIGIDO: adicionado suporte a retângulo, oval e círculo no desenho
-    for fig, values in figuras:
+    fig, values, cor = figura
 
-        if fig == "linha":
-            canvas.create_line(values[0], values[1], values[2], values[3])
+    opcoes = {}
+    opcoes["outline"] = cor
+    opcoes["fill"] = ""
 
-        elif fig == "rabisco":
-            canvas.create_line(values)
+    if tracejado:
+        opcoes["dash"] = (4, 2)
 
-        elif fig == "retangulo":
-            canvas.create_rectangle(values)
-
-        elif fig == "oval":
-            canvas.create_oval(values)
-
-        elif fig == "circulo":
-
-            x1, y1, x2, y2 = values
-
-            lado = min(abs(x2 - x1), abs(y2 - y1))
-
-            if x2 >= x1:
-                x2 = x1 + lado
-            else:
-                x2 = x1 - lado
-
-            if y2 >= y1:
-                y2 = y1 + lado
-            else:
-                y2 = y1 - lado
-
-        canvas.create_oval(x1, y1, x2, y2)
-
-def desenhar_figura_nova():
-    fig, values = figura_nova
-# =========================
-# Os novos tipo ja foram adicionados (feito por Murilo)
-# =========================
     if fig == "linha":
-        canvas.create_line(values[0], values[1], values[2], values[3], dash=(4, 2))
+        canvas.create_line(
+            values[0],
+            values[1],
+            values[2],
+            values[3],
+            fill = cor,
+            **({"dash": (4,2)} if tracejado else {})
+        )
 
     elif fig == "rabisco":
-        canvas.create_line(values, dash=(4, 2))
+        canvas.create_line(
+            values,
+            fill = cor,
+            **({"dash": (4,2)} if tracejado else {})
+        )
 
     elif fig == "retangulo":
-        canvas.create_rectangle(values, dash=(4, 2))
-    
+        canvas.create_rectangle(
+            values,
+            **opcoes
+        )
+
     elif fig == "oval":
-        canvas.create_oval(values, dash=(4, 2))
-    
+        canvas.create_oval(
+            values,
+            **opcoes
+        )
+
     elif fig == "circulo":
 
         x1, y1, x2, y2 = values
 
-        lado = min(abs(x2 - x1), abs(y2 - y1))
+        lado = min(abs(x2-x1), abs(y2-y1))
 
-        if x2 >= x1:
-            x2 = x1 + lado
-        else:
-            x2 = x1 - lado
+        if x2 < x1:
+            lado *= -1
 
-        if y2 >= y1:
-            y2 = y1 + lado
-        else:
-            y2 = y1 - lado
+        x2 = x1 + lado
+
+        lado = min(abs(x2-x1), abs(y2-y1))
+
+        if y2 < y1:
+            lado *= -1
+
+        y2 = y1 + lado
 
         canvas.create_oval(
             x1,
             y1,
             x2,
             y2,
-            dash=(4,2)
+            **opcoes
         )
 
+def desenhar_figuras():
+
+    canvas.delete("all")
+
+    for figura in figuras:
+        desenhar(figura)
+        
+def desenhar_figura_nova():
+
+    desenhar(
+        figura_nova,
+        tracejado=True
+    )
+
 def incompleta(figura):
-    fig, values = figura
+    fig, values, cor = figura
 
     if fig == "rabisco":
         return len(values) <= 1
 
     return (values[0], values[1]) == (values[2], values[3])
+
+def escolher_cor_borda():
+    global cor_borda
+
+    cor = askcolor(title="Escolha a cor da borda")
+
+    if cor[1] is not None:
+        cor_borda = cor[1]
 
 
 
@@ -143,6 +178,7 @@ def incompleta(figura):
 
 figuras = []       # Todas as figuras desenhadas
 figura_nova = None # Figura que está sendo desenhada, mas ainda não foi incluída em figuras
+cor_borda = "black" #define a borda padrão para preta
 
 root = Tk()
 root.title('Exemplo de aplicação')
@@ -159,6 +195,14 @@ label.grid(column=0, row=0, sticky=W, **paddings)
 tipo_figura_var = StringVar(root) # Guarda o tipo de figura selecionado no option menu (linha ou rabisco)
 option_menu = ttk.OptionMenu(frame, tipo_figura_var,
                              'Linha', 'Linha', 'Rabisco', 'Retangulo', 'Oval', 'Circulo')
+
+botao_cor = ttk.Button( #botao para selecionar cor da borda
+    frame,
+    text="Cor da borda",
+    command=escolher_cor_borda
+)
+
+botao_cor.grid(column=2, row=0, padx=5, pady=5)
 # =========================
 # - Atualização do OptionMenu com novos tipos de figura (feito por Murilo)
 # =========================
