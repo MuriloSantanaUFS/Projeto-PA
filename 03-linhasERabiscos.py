@@ -15,35 +15,40 @@ def iniciar_figura_nova(event):
         figura_nova = (
             "linha",
             (event.x, event.y, event.x, event.y),
-            cor_borda
+            cor_borda,
+            cor_preenchimento
         )
 
     elif tipo == 'Rabisco':
         figura_nova = (
             "rabisco",
             [(event.x, event.y)],
-            cor_borda
+            cor_borda,
+            cor_preenchimento
         )
 
     elif tipo == 'Retangulo':
         figura_nova = (
             "retangulo",
             (event.x, event.y, event.x, event.y),
-            cor_borda
+            cor_borda,
+            cor_preenchimento
         )
 
     elif tipo == 'Oval':
         figura_nova = (
             "oval",
             (event.x, event.y, event.x, event.y),
-            cor_borda
+            cor_borda,
+            cor_preenchimento
         )
 
     elif tipo == 'Circulo':
         figura_nova = (
             "circulo",
             (event.x, event.y, event.x, event.y),
-            cor_borda
+            cor_borda,
+            cor_preenchimento
         )
 
 # Quando mouse é movido com o botão pressionado
@@ -62,7 +67,8 @@ def atualizar_figura_nova(event):
                 event.x,
                 event.y
             ),
-            figura_nova[2]
+            figura_nova[2],
+            figura_nova[3]
         )
         
 
@@ -77,11 +83,11 @@ def incluir_figura_nova(event):
     
 def desenhar(figura, tracejado=False):
 
-    fig, values, cor = figura
+    fig, values, cor, preenchimento = figura
 
     opcoes = {}
     opcoes["outline"] = cor
-    opcoes["fill"] = ""
+    opcoes["fill"] = preenchimento
 
     if tracejado:
         opcoes["dash"] = (4, 2)
@@ -156,7 +162,7 @@ def desenhar_figura_nova():
     )
 
 def incompleta(figura):
-    fig, values, cor = figura
+    fig, values, cor, preenchimento = figura
 
     if fig == "rabisco":
         return len(values) <= 1
@@ -170,6 +176,14 @@ def escolher_cor_borda():
 
     if cor[1] is not None:
         cor_borda = cor[1]
+        
+def escolher_cor_preenchimento():
+    global cor_preenchimento
+
+    cor = askcolor(title="Escolha a cor do preenchimento")
+
+    if cor[1] is not None:
+        cor_preenchimento = cor[1]
 
 
 
@@ -179,16 +193,17 @@ def escolher_cor_borda():
 figuras = []       # Todas as figuras desenhadas
 figura_nova = None # Figura que está sendo desenhada, mas ainda não foi incluída em figuras
 cor_borda = "black" #define a borda padrão para preta
+cor_preenchimento = "" #sem preenchimento por padrao
 
 root = Tk()
-root.title('Exemplo de aplicação')
+root.title('Projeto PA - Editor Gráfico')
 frame = Frame(root)
 
 # Widgets arranjados com Layout grid dentro de frame
 paddings = {'padx': 5, 'pady': 5} 
 
 # label
-label = ttk.Label(frame,  text='Escolha se vai desenhar linha ou Rabisco:')
+label = ttk.Label(frame,  text='Escolha uma figura para desenhar:')
 label.grid(column=0, row=0, sticky=W, **paddings)
 
 # option menu
@@ -201,6 +216,14 @@ botao_cor = ttk.Button( #botao para selecionar cor da borda
     text="Cor da borda",
     command=escolher_cor_borda
 )
+
+botao_preenchimento = ttk.Button( #botao preenchimento
+    frame,
+    text="Preenchimento",
+    command=escolher_cor_preenchimento
+)
+
+botao_preenchimento.grid(column=3, row=0, padx=5, pady=5)
 
 botao_cor.grid(column=2, row=0, padx=5, pady=5)
 # =========================
