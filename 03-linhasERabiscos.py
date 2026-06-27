@@ -94,10 +94,11 @@ def desenhar_figura_nova():
 
 def incompleta(figura):
     fig, values = figura
-    if fig == "linha":
-        return (values[0], values[1]) == (values[2], values[3])
-    else : # fig == "rabisco"
+
+    if fig == "rabisco":
         return len(values) <= 1
+
+    return (values[0], values[1]) == (values[2], values[3])
 
 
 
