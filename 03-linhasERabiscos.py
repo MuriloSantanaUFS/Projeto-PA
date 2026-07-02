@@ -1,6 +1,7 @@
 from tkinter import *
 from tkinter import ttk
 from tkinter.colorchooser import askcolor
+from figuras import *
 
 # Quando mouse é pressionado
 def iniciar_figura_nova(event): 
@@ -12,140 +13,44 @@ def iniciar_figura_nova(event):
     tipo = tipo_figura_var.get()
 
     if tipo == 'Linha':
-        figura_nova = (
-            "linha",
-            (event.x, event.y, event.x, event.y),
-            cor_borda,
-            cor_preenchimento
-        )
+        figura_nova = Linha(event.x, event.y, cor_borda, cor_preenchimento)
 
-    elif tipo == 'Rabisco':
-        figura_nova = (
-            "rabisco",
-            [(event.x, event.y)],
-            cor_borda,
-            cor_preenchimento
-        )
+    elif tipo == "Rabisco":
+     figura_nova = Rabisco(event.x, event.y, cor_borda, cor_preenchimento)
 
-    elif tipo == 'Retangulo':
-        figura_nova = (
-            "retangulo",
-            (event.x, event.y, event.x, event.y),
-            cor_borda,
-            cor_preenchimento
-        )
+    elif tipo == "Retangulo":
+     figura_nova = Retangulo(event.x, event.y, cor_borda, cor_preenchimento)
 
-    elif tipo == 'Oval':
-        figura_nova = (
-            "oval",
-            (event.x, event.y, event.x, event.y),
-            cor_borda,
-            cor_preenchimento
-        )
+    elif tipo == "Oval":
+     figura_nova = Oval(event.x, event.y, cor_borda, cor_preenchimento)
 
-    elif tipo == 'Circulo':
-        figura_nova = (
-            "circulo",
-            (event.x, event.y, event.x, event.y),
-            cor_borda,
-            cor_preenchimento
-        )
+    elif tipo == "Circulo":
+     figura_nova = Circulo(event.x, event.y, cor_borda, cor_preenchimento)
+        
 
 # Quando mouse é movido com o botão pressionado
 def atualizar_figura_nova(event):
-    global figura_nova
-
-    if figura_nova[0] == "rabisco":
-        figura_nova[1].append((event.x, event.y))
-
-    else:
-        figura_nova = (
-            figura_nova[0],
-            (
-                figura_nova[1][0],
-                figura_nova[1][1],
-                event.x,
-                event.y
-            ),
-            figura_nova[2],
-            figura_nova[3]
-        )
-        
+    figura_nova.atualizar(event.x, event.y)
 
     desenhar_figuras()
     desenhar_figura_nova()
+        
 
+ 
 # Quando mouse é solto
-def incluir_figura_nova(event): 
-    if not incompleta(figura_nova): # para evitar incluir figuras incompletas, como uma linha sem comprimento ou um rabisco com um único ponto
-        figuras.append(figura_nova) 
+
+def incluir_figura_nova(event):
+    global figura_nova
+
+    if not figura_nova.incompleta():
+        figuras.append(figura_nova)
+
+    figura_nova = None
     desenhar_figuras()
     
+
 def desenhar(figura, tracejado=False):
-
-    fig, values, cor, preenchimento = figura
-
-    opcoes = {}
-    opcoes["outline"] = cor
-    opcoes["fill"] = preenchimento
-
-    if tracejado:
-        opcoes["dash"] = (4, 2)
-
-    if fig == "linha":
-        canvas.create_line(
-            values[0],
-            values[1],
-            values[2],
-            values[3],
-            fill = cor,
-            **({"dash": (4,2)} if tracejado else {})
-        )
-
-    elif fig == "rabisco":
-        canvas.create_line(
-            values,
-            fill = cor,
-            **({"dash": (4,2)} if tracejado else {})
-        )
-
-    elif fig == "retangulo":
-        canvas.create_rectangle(
-            values,
-            **opcoes
-        )
-
-    elif fig == "oval":
-        canvas.create_oval(
-            values,
-            **opcoes
-        )
-
-    elif fig == "circulo":
-
-        x1, y1, x2, y2 = values
-
-        lado = min(abs(x2-x1), abs(y2-y1))
-
-        if x2 < x1:
-            lado *= -1
-
-        x2 = x1 + lado
-
-        lado = min(abs(x2-x1), abs(y2-y1))
-
-        if y2 < y1:
-            lado *= -1
-
-        y2 = y1 + lado
-
-        canvas.create_oval(
-            x1,
-            y1,
-            x2,
-            y2,
-            **opcoes
-        )
+    figura.desenhar(canvas, tracejado)
 
 def desenhar_figuras():
 
@@ -155,19 +60,8 @@ def desenhar_figuras():
         desenhar(figura)
         
 def desenhar_figura_nova():
-
-    desenhar(
-        figura_nova,
-        tracejado=True
-    )
-
-def incompleta(figura):
-    fig, values, cor, preenchimento = figura
-
-    if fig == "rabisco":
-        return len(values) <= 1
-
-    return (values[0], values[1]) == (values[2], values[3])
+    if figura_nova is not None:
+        desenhar(figura_nova, tracejado=True)
 
 def escolher_cor_borda():
     global cor_borda
