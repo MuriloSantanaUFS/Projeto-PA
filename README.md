@@ -53,3 +53,9 @@ py 03-linhasERabiscos.py
 ## Demonstração
 
 ![Projeto PA - Editor Gráfico](screenshot.jpg)
+
+## Demonstração
+
+Programa em execução:
+
+![Programa funcionando](img/funcionamento.png)
