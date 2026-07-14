@@ -3,6 +3,16 @@ from tkinter import ttk
 
 
 class Janela:
+    """
+    Representa a interface gráfica do sistema.
+
+    Responsabilidade:
+        Criar todos os componentes visuais utilizados pela aplicação.
+
+    @author Marcelo, Murilo
+    @version 1.0
+    @since 1.0
+    """
 
     def __init__(self):
 
@@ -37,7 +47,13 @@ class Janela:
         self.botao_preenchimento = ttk.Button(frame, text="Preenchimento")
         self.botao_preenchimento.grid(column=3, row=0, padx=5, pady=5)
 
+        self.botao_salvar = ttk.Button(frame, text="Salvar")
+        self.botao_salvar.grid(column=4, row=0, padx=5, pady=5)
+
+        self.botao_abrir = ttk.Button(frame, text="Abrir")
+        self.botao_abrir.grid(column=5, row=0, padx=5, pady=5)
+
         self.canvas = Canvas(frame, bg="white", width=600, height=600)
-        self.canvas.grid(column=0, row=1, columnspan=4, sticky=W, **paddings)
+        self.canvas.grid(column=0, row=1, columnspan=6, sticky=W, **paddings)
 
         frame.pack()

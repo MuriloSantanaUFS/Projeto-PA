@@ -1,7 +1,18 @@
 from tkinter.colorchooser import askcolor
 from modelo.figuras import Linha, Rabisco, Retangulo, Oval, Circulo
+from tkinter.filedialog import asksaveasfilename, askopenfilename
 
 class Controlador:
+    """
+    Controla a interação entre a interface gráfica e o modelo.
+
+    Responsabilidade:
+        Receber os eventos do usuário e atualizar o desenho.
+
+    @author Marcelo, Murilo
+    @version 1.0
+    @since 1.0
+    """
 
     def __init__(self, desenho, janela):
         self.desenho = desenho
@@ -13,6 +24,9 @@ class Controlador:
 
         self.janela.botao_cor.config(command=self.escolher_cor_borda)
         self.janela.botao_preenchimento.config(command=self.escolher_cor_preenchimento)
+
+        self.janela.botao_salvar.config(command=self.salvar)
+        self.janela.botao_abrir.config(command=self.abrir)
 
         self.janela.canvas.bind("<ButtonPress-1>", self.iniciar_figura_nova)
         self.janela.canvas.bind("<B1-Motion>", self.atualizar_figura_nova)
@@ -80,3 +94,31 @@ class Controlador:
 
         if cor[1] is not None:
             self.cor_preenchimento = cor[1]
+
+    def salvar(self):
+
+        arquivo = asksaveasfilename(
+            defaultextension=".pkl",
+            filetypes=[("Arquivos do desenho", "*.pkl")]
+        )
+
+        print("Arquivo:", arquivo)
+
+        if arquivo:
+            print("Salvando...")
+            print(type(self.desenho))
+            print(self.desenho.__class__.__module__)
+            print(self.desenho.__class__.__name__)
+            print(dir(self.desenho))
+            self.desenho.salvar(arquivo)
+            print("Salvo!")
+
+    def abrir(self):
+
+        arquivo = askopenfilename(
+            filetypes=[("Arquivos do desenho", "*.pkl")]
+        )
+
+        if arquivo:
+            self.desenho.abrir(arquivo)
+            self.desenhar_figuras()
