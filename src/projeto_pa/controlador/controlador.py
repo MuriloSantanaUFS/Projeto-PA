@@ -1,6 +1,6 @@
 from tkinter.colorchooser import askcolor
-from modelo.figuras import Linha, Rabisco, Retangulo, Oval, Circulo
 from tkinter.filedialog import asksaveasfilename, askopenfilename
+from estado.estado import EstadoLinha, EstadoRabisco, EstadoRetangulo, EstadoOval, EstadoCirculo
 
 class Controlador:
     """
@@ -22,6 +22,17 @@ class Controlador:
         self.cor_borda = "black"
         self.cor_preenchimento = ""
 
+        self.estados = {
+            "Linha": EstadoLinha(),
+            "Rabisco": EstadoRabisco(),
+            "Retangulo": EstadoRetangulo(),
+            "Oval": EstadoOval(),
+            "Circulo": EstadoCirculo()
+        }
+
+        self.estado_atual = self.estados[self.janela.tipo_figura_var.get()]
+        self.janela.tipo_figura_var.trace_add("write", self.mudar_estado)
+
         self.janela.botao_cor.config(command=self.escolher_cor_borda)
         self.janela.botao_preenchimento.config(command=self.escolher_cor_preenchimento)
 
@@ -32,24 +43,14 @@ class Controlador:
         self.janela.canvas.bind("<B1-Motion>", self.atualizar_figura_nova)
         self.janela.canvas.bind("<ButtonRelease-1>", self.incluir_figura_nova)
 
+    def mudar_estado(self, *args):
+        self.estado_atual = self.estados[self.janela.tipo_figura_var.get()]
+
     def iniciar_figura_nova(self, event):
 
-        tipo = self.janela.tipo_figura_var.get()
-
-        if tipo == "Linha":
-            self.figura_nova = Linha(event.x, event.y, self.cor_borda, self.cor_preenchimento)
-
-        elif tipo == "Rabisco":
-            self.figura_nova = Rabisco(event.x, event.y, self.cor_borda, self.cor_preenchimento)
-
-        elif tipo == "Retangulo":
-            self.figura_nova = Retangulo(event.x, event.y, self.cor_borda, self.cor_preenchimento)
-
-        elif tipo == "Oval":
-            self.figura_nova = Oval(event.x, event.y, self.cor_borda, self.cor_preenchimento)
-
-        elif tipo == "Circulo":
-            self.figura_nova = Circulo(event.x, event.y, self.cor_borda, self.cor_preenchimento)
+        self.figura_nova = self.estado_atual.criar_figura(
+            event.x, event.y, self.cor_borda, self.cor_preenchimento
+        )
 
     def atualizar_figura_nova(self, event):
 
